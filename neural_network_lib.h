@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 struct Neuron {
-    double *weights;    // AN ARRAY OF WEIGHTS
-    double *bias;       // A SINGLE BIASES FOR THE NEURON -- MIGHT CHANGE THIS TO AN ARRAY LATER
+    double *weights;        // AN ARRAY OF WEIGHTS
+    double *bias;           // A SINGLE BIASES FOR THE NEURON -- MIGHT CHANGE THIS TO AN ARRAY LATER
     int *size_weights;
 };
 
