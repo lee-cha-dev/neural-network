@@ -1,4 +1,5 @@
 #include "neural_network_lib.h"
+#include <stdio.h>
 
 // SET THE SIZE OF WEIGHTS TO THE NUMBER OF REQUIRED WEIGHTS FOR THE NEURAL CONNECTIONS
 void neuron_set_neuron_weights(int number_of_weights, struct Neuron *pN, const double *values){
@@ -17,8 +18,19 @@ void neuron_set_neuron_weights(int number_of_weights, struct Neuron *pN, const d
 // TAKES IN A CONST INT AND CREATE A RANDOM ARRAY OF INTS FOR THE NEURON'S WEIGHTS
 // MIGHT TURN THIS INTO ON FUNCTION BY ITSELF, BUT MAY HAVE AN INITIALIZATION FUNCTION
 // AND A SET OF FUNCTION TO SPECIFICALLY MUTATE A NEURON INDIVIDUALLY
-void neuron_create_weights(const int *neural_connections){
+void neuron_create_weights(struct Neuron *n, const double *min, const double *max){
     // CREATE A RANDOM ARRAY OF WEIGHTS
+    printf("\nCreating weights\n");
+
+    // SET SEED -- NEEDS TO BE DONE IN ORDER TO SET GET RANDOM VALUES
+    srand(time(NULL));
+
+    // GET PAST INITIAL (PREDICTABLE) VALUE
+    get_random_double(min, max);
+
+    for(int i = 0; i < *n->size_weights; ++i){
+        n->weights[i] = get_random_double(min, max);
+    }
 }
 
 // INITIALIZATION FUNCTION FOR NEURONS
@@ -26,30 +38,20 @@ void neuron_create_weights(const int *neural_connections){
 // A FUNCTION WOULD BE THE MOST EFFICIENT ROUTE
 // THIS WAY IT CAN BE SKIPPED IF THE USER WANTS TO HAND PICK EACH
 // NEURON'S PARAMETERS
-void neuron_initialize_weights_bias(struct Neuron *pN, int size_of_weights){
+void neuron_initialize_weights_bias(struct Neuron *pN, int size_of_weights, double min, double max){
     // ALLOCATE SPACE TO THE POINTERS INSIDE THE STRUCT
     pN->weights = malloc(sizeof(double[size_of_weights]));
     pN->bias = malloc(sizeof(double));
     pN->size_weights = malloc(sizeof(int));
 
-    // CREATE AND SET THE VALUES FOR THE WEIGHTS TO 0
-    // CALL neuron_create_weights(); HERE IN LUE OF CALLOC
-    double *values;
-    values = calloc(size_of_weights, sizeof(double));
-
-    // WILL MOVE AWAY FROM CALLOC AND MOVE TO A RANDOM DOUBLE VALUE GENERATOR
-    // THIS WILL NEED TO ALLOW FOR AN ACCEPTABLE RANGE BASED ON TWO PASSED IN VALUES
-    // -- MOST LIKELY DOUBLE VALUES
-
     // SET THE SIZE OF WEIGHTS ARRAY
     *pN->size_weights = size_of_weights;
 
-    // CALL FUNCTION TO SET THE WEIGHTS
-    neuron_set_neuron_weights(
-            size_of_weights,
-            pN,
-            values
-    );
+    // CREATE AND SET THE VALUES FOR THE WEIGHTS TO A RANDOM DOUBLE -- RANDOMNESS MAY
+    // BE PREDICTABLE ***
+    neuron_create_weights(pN, &min, &max);
+
+    *pN->bias = get_random_double(&min, &max);
 }
 
 // NEURON FUNCTIONS TO SET INDIVIDUAL VALUES -- MAY BE UNNECESSARY --
@@ -59,5 +61,13 @@ void neuron_set_weight(struct Neuron *pN, int index, double value){
 
 void neuron_set_bias(struct Neuron *pN, double value){
     *pN->bias = value;
+}
+
+double get_random_double(const double *min, const double *max){
+//    srand((double) time( ));
+//    double value = (float) rand() / (float)(RAND_MAX);
+    double value;
+    value = (double)rand() / ((double) RAND_MAX + 1);
+    return (*min + value * (*max - *min));
 }
 
