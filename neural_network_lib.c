@@ -1,12 +1,11 @@
 #include "neural_network_lib.h"
 
 // SET THE SIZE OF WEIGHTS TO THE NUMBER OF REQUIRED WEIGHTS FOR THE NEURAL CONNECTIONS
-void neuron_set_neuron_weights(int number_of_weights, struct Neuron *n, const double *values){
-    n->weights = malloc(sizeof(double[number_of_weights]));
+void neuron_set_neuron_weights(int number_of_weights, struct Neuron *pN, const double *values){
 
     // ITERATE THROUGH THE ARRAY THAT WAS CREATED FOR THIS NEURON'S WEIGHTS
     for (int i = 0; i < number_of_weights; ++i){
-        n->weights[i] = values[i];
+        pN->weights[i] = values[i];
     }
 
     // THE INT POINTER ARRAY THAT WAS PASSED IN CONTAINING THE WEIGHTS WILL
