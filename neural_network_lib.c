@@ -2,10 +2,6 @@
 
 #include <stdio.h>
 
-void neural_network_test(){
-    printf("\nNeural library\n");
-}
-
 // SET THE SIZE OF WEIGHTS TO THE NUMBER OF REQUIRED WEIGHTS FOR THE NEURAL CONNECTIONS
 void neuron_set_neuron_weights(int number_of_weights, struct Neuron *n, const double *values){
     n->weights = malloc(sizeof(double[number_of_weights]));

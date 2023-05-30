@@ -3,8 +3,6 @@
 
 #include <stdlib.h>
 
-void neural_network_test();
-
 struct Neuron {
     double *weights;    // AN ARRAY OF WEIGHTS
     double *bias;       // A SINGLE BIASES FOR THE NEURON -- MIGHT CHANGE THIS TO AN ARRAY LATER
