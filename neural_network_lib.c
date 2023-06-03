@@ -87,8 +87,56 @@ void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int
 }
 
 // NEURAL NETWORK STARTS HERE
-void neural_network_init(struct NeuralNetwork *pNN, int size_of_nn, double min, double max){
+void neural_network_init(struct NeuralNetwork *pNN, int size_of_nn, double min, double max, int input_layer_size, int output_layer_size, int min_hlayer_size, int max_hlayer_size){
+    pNN->number_of_layers = size_of_nn;     // SIZE OF NN INCLUDES THE OUTPUT AND INPUT LAYERS
 
+    pNN->layers = malloc(sizeof(struct Layer[size_of_nn]));
+
+    // SET SEED -- NEEDS TO BE DONE IN ORDER TO SET GET RANDOM VALUES
+    get_random_double(&min, &max);
+    get_random_int(&min_hlayer_size, &max_hlayer_size);
+
+    int current_size = input_layer_size;
+    int next_layer_size;
+
+    for(int i = 0; i < size_of_nn - 1; ++i){
+        // CREATE NEW LAYER
+        struct Layer *l = malloc(sizeof(struct Layer));
+
+        // SET THE NEXT LAYER'S SIZE -- THIS IS CURRENTLY NOT WORKING -- RANDOMNESS WILL BE
+        // IMPLEMENTED AT A LATER STAGE
+        next_layer_size = get_random_int(&min_hlayer_size, &max_hlayer_size);
+
+
+        // INIT NEW LAYER
+        layer_init(l, current_size, min, max, next_layer_size);
+
+        // ASSIGN THE NEW LAYER TO THE NEURAL NETWORK
+        pNN->layers[i] = *l;
+
+        // RELEASE THE TEMP LAYER
+        free(l);
+        l = NULL;
+
+        // UPDATE THE CURRENT SIZE FOR THE NEXT ITERATION/LAYER -- ALLOWS WEIGHTS OF PREVIOUS LAYER
+        // TO MATCH THE NEURONS IN THE CURRENT LAYER
+        current_size = next_layer_size;
+    }
+    // CREATE OUTPUT LAYER
+
+    // CREATE NEW LAYER
+    struct Layer *l = malloc(sizeof(struct Layer));
+
+    // INIT NEW LAYER -- SET THE NEXT LAYER TO ONE -- THIS WILL MOST LIKELY BE CHANGED
+    // ONCE THE CODE FOR PASSING DATA HAS WRITTEN. ITS MORE OF REPRESENTATION OF THE NEURON RIGHT NOW
+    layer_init(l, output_layer_size, min, max, 1);
+
+    // ASSIGN THE NEW LAYER TO THE NEURAL NETWORK
+    pNN->layers[size_of_nn - 1] = *l;
+
+    // RELEASE THE TEMP LAYER
+    free(l);
+    l = NULL;
 }
 
 // THIS IS NOT A REAL RANDOM NUMBER GENERATOR. IT IS PREDICTABLE, BUT
@@ -103,8 +151,28 @@ double get_random_double(const double *min, const double *max){
     return (*min + value * (*max - *min));
 }
 
+double get_random_int(const int *min, const int *max){
+//    int value;
+//    value = (int)rand() / ((int) RAND_MAX + 1);
+//    return (*min + value * (*max - *min));
+    int total = *min + *max;
+    return round(total / 2);
+}
 
 
-// WILL NEED TO REFACTOR THE FUNCTIONS THAT HAVE SMALL VARS BEING PASSED IN BY REFERENCE
-// FAIRLY SURE IT IS CHEAPER TO PASS THEM BY VALUE DUE TO THEIR SIZE
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WITH THE LOOPS IN NEURAL_NETWORK_INIT, I THINK I CAN CALL MALLOC JUST ONCE, AND                                    //
+// THEN REASSIGN THE VALUES TO THE ADDRESS. THEN, ONCE THE FUNCTION IS FINISHED, I COULD                              //
+// FREE UP THE MEMORY.                                                                                                //
+// IT SEEMS REDUNDANT TO CALL MALLOC SOME MANY TIMES WHEN THE SPACE SHOULD BE THE SAME                                //
+//                                                                                                                    //
+// THOUGH THERE WILL MOST LIKELY NEED TO BE A FUNCTION THAT DEALLOCATES FROM NEURONS, LAYERS, AND NEURONS.            //
+// IN THIS LIBRARY'S CURRENT STATE, I AM FAIRLY SURE THAT THERE ARE MEMORY LEAKS DUE TO ONLY RELEASING                //
+// THE LAYER'S POINT, BUT NOT THE NEURONS POINTERS THAT POINT TO THE WEIGHTS;                                         //
+//                                                                                                                    //
+// THIS SHOULD CREATE A MEMORY LEAK -- THIS WILL BE A PRIORITY TO ADDRESS                                             //
+//                                                                                                                    //
+// POSSIBLY CREATE A FUNCTION THAT WILL TAKE IN A LAYER'S POINT AND RELEASE ALL                                       //
+// MEMORY DOWN TO THE NEURON'S WEIGHTS.                                                                               //
+// THIS MIGHT BE SOMETHING COULD BE HANDLED ON A SEPARATE PROCESS (PROCESSES WILL COME LATER).                        //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
