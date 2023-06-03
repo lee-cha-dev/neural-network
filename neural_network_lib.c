@@ -18,7 +18,7 @@ void neuron_set_neuron_weights(int number_of_weights, struct Neuron *pN, const d
 // TAKES IN A CONST INT AND CREATE A RANDOM ARRAY OF INTS FOR THE NEURON'S WEIGHTS
 // MIGHT TURN THIS INTO ON FUNCTION BY ITSELF, BUT MAY HAVE AN INITIALIZATION FUNCTION
 // AND A SET OF FUNCTION TO SPECIFICALLY MUTATE A NEURON INDIVIDUALLY
-void neuron_create_weights(struct Neuron *n, const double *min, const double *max){
+void neuron_create_weights(struct Neuron *n, double min, double max, int size_weights){
     // CREATE A RANDOM ARRAY OF WEIGHTS
 //    printf("\nCreating weights\n");
 
@@ -26,10 +26,10 @@ void neuron_create_weights(struct Neuron *n, const double *min, const double *ma
     srand(time(NULL));
 
     // GET PAST INITIAL (PREDICTABLE) VALUE
-    get_random_double(min, max);
+    get_random_double(&min, &max);
 
-    for(int i = 0; i < *n->size_weights; ++i){
-        n->weights[i] = get_random_double(min, max);
+    for(int i = 0; i < size_weights; ++i){
+        n->weights[i] = get_random_double(&min, &max);
     }
 }
 
@@ -42,14 +42,10 @@ void neuron_initialize_weights_bias(struct Neuron *pN, int size_of_weights, doub
     // ALLOCATE SPACE TO THE POINTERS INSIDE THE STRUCT
     pN->weights = malloc(sizeof(double[size_of_weights]));
     pN->bias = malloc(sizeof(double));
-    pN->size_weights = malloc(sizeof(int));
-
-    // SET THE SIZE OF WEIGHTS ARRAY
-    *pN->size_weights = size_of_weights;
 
     // CREATE AND SET THE VALUES FOR THE WEIGHTS TO A RANDOM DOUBLE -- RANDOMNESS MAY
     // BE PREDICTABLE ***
-    neuron_create_weights(pN, &min, &max);
+    neuron_create_weights(pN, min, max, size_of_weights);
 
     *pN->bias = get_random_double(&min, &max);
 }
@@ -71,12 +67,14 @@ void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int
 
     pL->neurons = malloc(sizeof(struct Neuron[size_of_layer]));
 
+    pL->number_of_weights_per_neuron = size_of_next_layer;
+
     for (int i = 0; i < size_of_layer; ++i){
         // CREATE NEURON TO BE ADDED TO ARRAY
         struct Neuron *temp_neuron;
         temp_neuron = malloc(sizeof(struct Neuron));
 
-        // INITIALIZE NEURON'S WEIGHTS AND BIAS
+        // INITIALIZE NEURON'S WEIGHTS AND BIAS -- PASS SIZE OF NEXT LAYER FOR WEIGHTS
         neuron_initialize_weights_bias(temp_neuron, size_of_next_layer, min, max);
 
         // PASS THE NEURON INTO THE ARRAY
@@ -87,7 +85,6 @@ void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int
         temp_neuron = NULL;
     }
 }
-
 
 // THIS IS NOT A REAL RANDOM NUMBER GENERATOR. IT IS PREDICTABLE, BUT
 // WILL BE OKAY FOR THE TIME BEING.
@@ -100,6 +97,8 @@ double get_random_double(const double *min, const double *max){
     value = (double)rand() / ((double) RAND_MAX + 1);
     return (*min + value * (*max - *min));
 }
+
+
 
 // WILL NEED TO REFACTOR THE FUNCTIONS THAT HAVE SMALL VARS BEING PASSED IN BY REFERENCE
 // FAIRLY SURE IT IS CHEAPER TO PASS THEM BY VALUE DUE TO THEIR SIZE
