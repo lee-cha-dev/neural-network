@@ -25,7 +25,7 @@ struct NeuralNetwork {
 // AVOID USING AN EXTERNAL LIBRARY DUE TO LIMITING LEARNING.
 
 // SETTING/HANDLING THE NEURON'S VALUES
-void neuron_initialize_weights_bias(struct Neuron *pN, int size_of_weights, double min, double max);
+void neuron_init(struct Neuron *pN, int size_of_weights, double min, double max);
 void neuron_set_neuron_weights(int number_of_weights, struct Neuron *n, const double *values);
 void neuron_create_weights(struct Neuron *n, double min, double max, int size_weights);
 void neuron_set_weight(struct Neuron *pN, int index, double value);

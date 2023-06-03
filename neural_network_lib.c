@@ -38,7 +38,7 @@ void neuron_create_weights(struct Neuron *n, double min, double max, int size_we
 // A FUNCTION WOULD BE THE MOST EFFICIENT ROUTE
 // THIS WAY IT CAN BE SKIPPED IF THE USER WANTS TO HAND PICK EACH
 // NEURON'S PARAMETERS
-void neuron_initialize_weights_bias(struct Neuron *pN, int size_of_weights, double min, double max){
+void neuron_init(struct Neuron *pN, int size_of_weights, double min, double max){
     // ALLOCATE SPACE TO THE POINTERS INSIDE THE STRUCT
     pN->weights = malloc(sizeof(double[size_of_weights]));
     pN->bias = malloc(sizeof(double));
@@ -75,7 +75,7 @@ void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int
         temp_neuron = malloc(sizeof(struct Neuron));
 
         // INITIALIZE NEURON'S WEIGHTS AND BIAS -- PASS SIZE OF NEXT LAYER FOR WEIGHTS
-        neuron_initialize_weights_bias(temp_neuron, size_of_next_layer, min, max);
+        neuron_init(temp_neuron, size_of_next_layer, min, max);
 
         // PASS THE NEURON INTO THE ARRAY
         pL->neurons[i] = *temp_neuron;
@@ -88,7 +88,7 @@ void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int
 
 // NEURAL NETWORK STARTS HERE
 void neural_network_init(struct NeuralNetwork *pNN, int size_of_nn, double min, double max){
-    
+
 }
 
 // THIS IS NOT A REAL RANDOM NUMBER GENERATOR. IT IS PREDICTABLE, BUT
