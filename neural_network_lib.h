@@ -4,12 +4,28 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+// STRUCTS
 struct Neuron {
     double *weights;        // AN ARRAY OF WEIGHTS
     double *bias;           // A SINGLE BIASES FOR THE NEURON -- MIGHT CHANGE THIS TO AN ARRAY LATER
     int *size_weights;
 };
+
+struct Layer {
+    struct Neuron *neurons;
+    int *layer_size;
+};
+
+//*********************************************************************************************//
+// I MIGHT BYPASS THE NEURON STRUCT AND JUST HAVE A LAYER STRUCT THAT HAS                      //
+// A POINTER TO A MATRIX OF WEIGHTS, A LAYER_SIZE, AND A POINTER TO AN ARRAY OF BIASES (FOR    //
+// EACH NEURON).                                                                               //
+// EACH ONE-DIMENSIONAL ARRAY WOULD REPRESENT A NEURON.                                        //
+// THIS WOULD ALLOW FOR OPTIMIZATION BY IMPLEMENTING A BLOCK CACHE ALGORITHM..MAYBE?           //
+//*********************************************************************************************//
+
+// THE MATRIX MULTIPLICATION WILL MOST DEFINITELY NEED TO ACCESS MEMORY IN BLOCKS. I WOULD LIKE TO
+// AVOID USING AN EXTERNAL LIBRARY DUE TO LIMITING LEARNING.
 
 // SETTING/HANDLING THE NEURON'S VALUES
 void neuron_initialize_weights_bias(struct Neuron *pN, int size_of_weights, double min, double max);
@@ -18,6 +34,8 @@ void neuron_create_weights(struct Neuron *n, const double *min, const double *ma
 void neuron_set_weight(struct Neuron *pN, int index, double value);
 void neuron_set_bias(struct Neuron *pN, double value);
 
+// SETTING && HANDLING THE LAYER'S VALUES
+void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int size_of_next_layer);
 // RANDOM NUMBER GENERATION
 double get_random_double(const double *min, const double *max);
 
