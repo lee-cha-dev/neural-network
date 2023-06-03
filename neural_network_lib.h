@@ -16,6 +16,11 @@ struct Layer {
     int number_of_weights_per_neuron;   // NUMBER OF WEIGHTS EACH NEURON HAS
 };
 
+struct NeuralNetwork {
+    struct Layer *layers;               // ARRAY OF LAYERS - INCLUDES INPUT AND OUTPUT LAYERS
+    int number_of_layers;
+};
+
 // THE MATRIX MULTIPLICATION WILL MOST DEFINITELY NEED TO ACCESS MEMORY IN BLOCKS. I WOULD LIKE TO
 // AVOID USING AN EXTERNAL LIBRARY DUE TO LIMITING LEARNING.
 
@@ -28,6 +33,9 @@ void neuron_set_bias(struct Neuron *pN, double value);
 
 // SETTING && HANDLING THE LAYER'S VALUES
 void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int size_of_next_layer);
+
+// SETTINGS && HANDLING THE NEURAL NETWORK'S VALUES
+void neural_network_init(struct NeuralNetwork *pNN, int size_of_nn, double min, double max);
 
 // RANDOM NUMBER GENERATION
 double get_random_double(const double *min, const double *max);

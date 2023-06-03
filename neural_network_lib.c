@@ -86,6 +86,11 @@ void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int
     }
 }
 
+// NEURAL NETWORK STARTS HERE
+void neural_network_init(struct NeuralNetwork *pNN, int size_of_nn, double min, double max){
+    
+}
+
 // THIS IS NOT A REAL RANDOM NUMBER GENERATOR. IT IS PREDICTABLE, BUT
 // WILL BE OKAY FOR THE TIME BEING.
 // ONCE THE NEURAL NETWORK STRUCT, AND THE LEARNING ALGORITHMS
