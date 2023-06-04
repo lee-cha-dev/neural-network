@@ -1,133 +1,45 @@
 #include "neural_network_lib.h"
 #include <stdio.h>
 
-// SET THE SIZE OF WEIGHTS TO THE NUMBER OF REQUIRED WEIGHTS FOR THE NEURAL CONNECTIONS
-void neuron_set_neuron_weights(int number_of_weights, struct Neuron *pN, const double *values){
+// NN STARTS HERE
+void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int input_layer_size, int output_layer_size, int min_hlayer_size, int max_hlayer_size){
+    //---ALLOCATE SPACE TO LAYERS
+    // INPUT LAYER: POINTERS(LAYER) -> POINTERS(NEURON) -> DOUBLE(WEIGHT)
+    pNN->input_layer = malloc(input_layer_size * sizeof(double**));
 
-    // ITERATE THROUGH THE ARRAY THAT WAS CREATED FOR THIS NEURON'S WEIGHTS
-    for (int i = 0; i < number_of_weights; ++i){
-        pN->weights[i] = values[i];
+    // HIDDEN LAYER: POINTERS(LAYERS) -> POINTERS(LAYER) -> POINTERS(NEURON) -> DOUBLE(WEIGHT)
+    int hidden_layer_size = (min_hlayer_size + max_hlayer_size) / 2;        // WILL EVENTUALLY RETURN RANDOM VAL WITHIN RANGE
+    pNN->hidden_layers = malloc(hidden_layer_size * sizeof(double***));
+
+    // OUTPUT LAYER: POINTERS(LAYER) TO POINTERS(NEURON) TO DOUBLE(WEIGHT)
+    pNN->output_layer = malloc(output_layer_size * sizeof(double**));
+
+    //---ALLOCATE SPACE TO BIASES - EACH NEURON HAS ONE BIAS VALUE
+    // INPUT LAYER BIASES: POINTERS(LAYER) -> DOUBLE(BIAS)
+    pNN->input_layer_biases = malloc(input_layer_size * sizeof(double*));
+
+    // HIDDEN LAYERS: POINTERS(LAYERS) -> POINTERS(LAYER) -> DOUBLE(BIAS)
+    pNN->hidden_layers_biases = malloc(hidden_layer_size * sizeof(double**));
+
+    // OUTPUT LAYER: POINTER(LAYER) -> DOUBLE(BIAS)
+    pNN->output_layer_biases = malloc(output_layer_size * sizeof(double*));
+
+    // CREATE THE POINTERS AND THE VALUES THEY ARE POINTING TO
+
+    // CREATE THE INPUT LAYER
+//    int next_layer_size = get_random_int(&min_weight_val, &max_weight_val);
+    int next_layer_size = (min_hlayer_size + max_hlayer_size) / 2;
+    for(int i = 0; i < input_layer_size; ++i){
+        // SET THE NEURON ARRAY THAT IS POINTING TO A WEIGHT TO THE SIZE OF THE NEXT LAYER
+        // THIS WILL ENSURE EACH NEURON HAS ENOUGH WEIGHTS TO MATCH THE NEXT LAYER
+        pNN->input_layer[i] = malloc(next_layer_size * sizeof(double));;
+
+        // INIT THE WEIGHT VALUES -- WORKING WITHIN THE
+        for(int j = 0; j < next_layer_size; ++j){
+            // ALLOCATE SPACE FOR DOUBLE AND ASSIGN IT TO 0.0
+            pNN->input_layer[i][j] = (double)j;
+        }
     }
-
-    // THE INT POINTER ARRAY THAT WAS PASSED IN CONTAINING THE WEIGHTS WILL
-    // BE FREED AND SET TO NULL AFTER THIS FUNCTION IS CALLED.
-    // THIS IS ASSUMING THAT ANOTHER FUNCTION DOES NOT CREATE THE RANDOM VALUES
-    // AND CALLS THIS FUNCTION TO HANDLE ASSIGNING THE WEIGHTS TO THE STRUCT
-}
-
-// TAKES IN A CONST INT AND CREATE A RANDOM ARRAY OF INTS FOR THE NEURON'S WEIGHTS
-// MIGHT TURN THIS INTO ON FUNCTION BY ITSELF, BUT MAY HAVE AN INITIALIZATION FUNCTION
-// AND A SET OF FUNCTION TO SPECIFICALLY MUTATE A NEURON INDIVIDUALLY
-void neuron_create_weights(struct Neuron *n, double min, double max, int size_weights){
-    // CREATE A RANDOM ARRAY OF WEIGHTS
-//    printf("\nCreating weights\n");
-
-    // SET SEED -- NEEDS TO BE DONE IN ORDER TO SET GET RANDOM VALUES
-    srand(time(NULL));
-
-    // GET PAST INITIAL (PREDICTABLE) VALUE
-    get_random_double(&min, &max);
-
-    for(int i = 0; i < size_weights; ++i){
-        n->weights[i] = get_random_double(&min, &max);
-    }
-}
-
-// INITIALIZATION FUNCTION FOR NEURONS
-// THE WEIGHTS AND BIASES NEED TO BE RANDOMLY GENERATED, SO
-// A FUNCTION WOULD BE THE MOST EFFICIENT ROUTE
-// THIS WAY IT CAN BE SKIPPED IF THE USER WANTS TO HAND PICK EACH
-// NEURON'S PARAMETERS
-void neuron_init(struct Neuron *pN, int size_of_weights, double min, double max){
-    // ALLOCATE SPACE TO THE POINTERS INSIDE THE STRUCT
-    pN->weights = malloc(sizeof(double[size_of_weights]));
-
-    // CREATE AND SET THE VALUES FOR THE WEIGHTS TO A RANDOM DOUBLE -- RANDOMNESS MAY
-    // BE PREDICTABLE ***
-    neuron_create_weights(pN, min, max, size_of_weights);
-
-    pN->bias = get_random_double(&min, &max);
-}
-
-// NEURON FUNCTIONS TO SET INDIVIDUAL VALUES -- MAY BE UNNECESSARY --
-void neuron_set_weight(struct Neuron *pN, int index, double value){
-    pN->weights[index] = value;
-}
-
-void neuron_set_bias(struct Neuron *pN, double value){
-    pN->bias = value;
-}
-
-// LAYER FUNCTIONS START
-void layer_init(struct Layer *pL, int size_of_layer, double min, double max, int size_of_next_layer){
-    // SET LAYER SIZE
-    pL->layer_size = size_of_layer;
-
-    pL->next_layer_size = size_of_next_layer;
-
-    pL->neurons = malloc(sizeof(struct Neuron[size_of_layer]));
-
-    pL->number_of_weights_per_neuron = size_of_next_layer;
-
-    for (int i = 0; i < size_of_layer; ++i){
-        // CREATE NEURON TO BE ADDED TO ARRAY
-        struct Neuron temp_neuron;
-
-        // INITIALIZE NEURON'S WEIGHTS AND BIAS -- PASS SIZE OF NEXT LAYER FOR WEIGHTS
-        neuron_init(&temp_neuron, size_of_next_layer, min, max);
-
-        // PASS THE NEURON INTO THE ARRAY
-        pL->neurons[i] = temp_neuron;
-    }
-}
-
-// NEURAL NETWORK STARTS HERE
-void neural_network_init(struct NeuralNetwork *pNN, int size_of_nn, double min, double max, int input_layer_size, int output_layer_size, int min_hlayer_size, int max_hlayer_size){
-    pNN->number_of_layers = size_of_nn;     // SIZE OF NN INCLUDES THE OUTPUT AND INPUT LAYERS
-
-    pNN->layers = malloc(sizeof(struct Layer[size_of_nn]));
-
-    // SET SEED -- NEEDS TO BE DONE IN ORDER TO SET GET RANDOM VALUES
-    get_random_double(&min, &max);
-    get_random_int(&min_hlayer_size, &max_hlayer_size);
-
-    int current_size = input_layer_size;
-    int next_layer_size;
-
-
-    for(int i = 0; i < size_of_nn - 1; ++i){
-        // CREATE NEW LAYER
-        struct Layer l;
-
-        // SET THE NEXT LAYER'S SIZE -- THIS IS CURRENTLY NOT WORKING -- RANDOMNESS WILL BE
-        // IMPLEMENTED AT A LATER STAGE
-        next_layer_size = get_random_int(&min_hlayer_size, &max_hlayer_size);
-
-        // INIT NEW LAYER
-        layer_init(&l, current_size, min, max, next_layer_size);
-
-        // ASSIGN THE NEW LAYER TO THE NEURAL NETWORK
-        pNN->layers[i] = l;
-
-        // RELEASE THE TEMP LAYER -- THIS WILL NEED TO RELEASE MEM ALL THE WAY
-        // DOWN TO THE NEURON
-
-        // UPDATE THE CURRENT SIZE FOR THE NEXT ITERATION/LAYER -- ALLOWS WEIGHTS OF PREVIOUS LAYER
-        // TO MATCH THE NEURONS IN THE CURRENT LAYER
-        current_size = next_layer_size;
-    }
-    // CREATE OUTPUT LAYER
-    struct Layer l;
-
-    // INIT NEW LAYER -- SET THE NEXT LAYER TO ONE -- THIS WILL MOST LIKELY BE CHANGED
-    // ONCE THE CODE FOR PASSING DATA HAS WRITTEN. ITS MORE OF REPRESENTATION OF THE NEURON RIGHT NOW
-    layer_init(&l, output_layer_size, min, max, 1);
-
-    // ASSIGN THE NEW LAYER TO THE NEURAL NETWORK
-    pNN->layers[size_of_nn - 1] = l;
-
-    // RELEASE THE TEMP LAYER
-
 }
 
 // THIS IS NOT A REAL RANDOM NUMBER GENERATOR. IT IS PREDICTABLE, BUT
