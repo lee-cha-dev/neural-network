@@ -27,19 +27,41 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
     // CREATE THE POINTERS AND THE VALUES THEY ARE POINTING TO
 
     // CREATE THE INPUT LAYER
+    pNN->input_layer_size = input_layer_size;
 //    int next_layer_size = get_random_int(&min_weight_val, &max_weight_val);
     int next_layer_size = (min_hlayer_size + max_hlayer_size) / 2;
+
     for(int i = 0; i < input_layer_size; ++i){
         // SET THE NEURON ARRAY THAT IS POINTING TO A WEIGHT TO THE SIZE OF THE NEXT LAYER
         // THIS WILL ENSURE EACH NEURON HAS ENOUGH WEIGHTS TO MATCH THE NEXT LAYER
-        pNN->input_layer[i] = malloc(next_layer_size * sizeof(double));;
+        // pNN->input_layer[i] is at the neuron
+        pNN->input_layer[i] = malloc(next_layer_size * sizeof(double));
 
+        // pNN->input_layer[i][j] is at the double variable
         // INIT THE WEIGHT VALUES -- WORKING WITHIN THE
         for(int j = 0; j < next_layer_size; ++j){
             // ALLOCATE SPACE FOR DOUBLE AND ASSIGN IT TO 0.0
             pNN->input_layer[i][j] = (double)j;
         }
     }
+
+    // SETTING FIRST HIDDEN LAYER SIZE FOR FREE_NN TESTING
+    pNN->hidden_layer_sizes = malloc(hidden_layer_size * sizeof(int));
+    pNN->hidden_layer_sizes[0] = next_layer_size;
+}
+
+void free_nn_pointers(struct NN *pNN, int input_layer_size){
+    // FREE INPUT LAYER
+    for(int i = 0; i < pNN->input_layer_size; ++i){
+        free(pNN->input_layer[i]);
+        pNN->input_layer[i] = NULL;
+    }
+    free(pNN->input_layer);
+    pNN->input_layer = NULL;
+
+    // FREE HIDDEN LAYER
+
+    // FREE OUTPUT LAYER
 }
 
 // THIS IS NOT A REAL RANDOM NUMBER GENERATOR. IT IS PREDICTABLE, BUT
