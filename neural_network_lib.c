@@ -3,12 +3,18 @@
 
 // NN STARTS HERE
 void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int input_layer_size, int output_layer_size, int min_hlayer_size, int max_hlayer_size){
+
+    pNN->input_layer_size = input_layer_size;
+    pNN->output_layer_size = output_layer_size;
+
     //---ALLOCATE SPACE TO LAYERS
     // INPUT LAYER: POINTERS(LAYER) -> POINTERS(NEURON) -> DOUBLE(WEIGHT)
     pNN->input_layer = malloc(input_layer_size * sizeof(double**));
 
     // HIDDEN LAYER: POINTERS(LAYERS) -> POINTERS(LAYER) -> POINTERS(NEURON) -> DOUBLE(WEIGHT)
     int hidden_layer_size = (min_hlayer_size + max_hlayer_size) / 2;        // WILL EVENTUALLY RETURN RANDOM VAL WITHIN RANGE
+    pNN->number_of_hidden_layers = hidden_layer_size;
+
     pNN->hidden_layers = malloc(hidden_layer_size * sizeof(double***));
 
     // OUTPUT LAYER: POINTERS(LAYER) TO POINTERS(NEURON) TO DOUBLE(WEIGHT)
@@ -48,9 +54,6 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
     // SETTING FIRST HIDDEN LAYER SIZE FOR FREE_NN TESTING
     pNN->hidden_layer_sizes = malloc(hidden_layer_size * sizeof(int));  // MOVE THIS TO MEM INIT @TOP
 
-    // CODES NEEDS TO BE RAN WITHIN TEST ENV -- STARTS
-    //------------------------------------------------------------------------------------------------------------//
-
     // CREATE THE HIDDEN LAYERS
     // ACCESSING INDIVIDUAL HIDDEN LAYERS
     for(int i = 0; i < hidden_layer_size; ++i){
@@ -71,8 +74,6 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
             }
         }
     }
-    //------------------------------------------------------------------------------------------------------------//
-    // CODES NEEDS TO BE RAN WITHIN TEST ENV -- ENDS
 }
 
 void free_nn_pointers(struct NN *pNN, int input_layer_size){
