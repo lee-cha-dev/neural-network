@@ -59,7 +59,7 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
 
     // CREATE THE HIDDEN LAYERS
     // ACCESSING INDIVIDUAL HIDDEN LAYERS
-    for(int i = 0; i < hidden_layer_size; ++i){
+    for(int i = 0; i < hidden_layer_size - 1; ++i){
         pNN->hidden_layer_sizes[i] = next_layer_size;
         pNN->hidden_layers[i] = malloc(next_layer_size * sizeof(double**));
 
@@ -75,6 +75,27 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
             for(int k = 0; k < next_layer_size; ++k){
                 pNN->hidden_layers[i][j][k] = get_random_double(max_weight_val);
             }
+        }
+    }
+
+    // CREATE LAST HIDDEN LAYER
+    // SET SIZE OF LAST HIDDEN LAYER
+    int current_layer_size = get_random_int(max_hlayer_size);
+
+    //WEIGHTS NEED TO MATCH OUTPUT LAYER SIZE
+    pNN->hidden_layer_sizes[hidden_layer_size - 1] = current_layer_size;
+    pNN->hidden_layers[hidden_layer_size - 1] = malloc(current_layer_size * sizeof(double**));
+
+    // UPDATE CURRENT LAYER
+    int i = hidden_layer_size - 1;
+
+    // CREATE NEURONS WITHIN EACH HIDDEN LAYER
+    for(int j = 0; j < current_layer_size; ++j){
+        pNN->hidden_layers[i][j] = malloc(output_layer_size * sizeof(double));
+
+        // ASSIGN DOUBLE VALUES TO WEIGHT OF EACH NEURON
+        for(int k = 0; k < output_layer_size; ++k){
+            pNN->hidden_layers[i][j][k] = get_random_double(max_weight_val);
         }
     }
 }
