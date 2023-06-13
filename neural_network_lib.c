@@ -21,7 +21,7 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
     pNN->hidden_layers = malloc(hidden_layer_size * sizeof(double***));
 
     // OUTPUT LAYER: POINTERS(LAYER) TO POINTERS(NEURON) TO DOUBLE(WEIGHT)
-    pNN->output_layer = malloc(output_layer_size * sizeof(double**));
+    pNN->output_layer = malloc(output_layer_size * sizeof(double*));
 
     //---ALLOCATE SPACE TO BIASES - EACH NEURON HAS ONE BIAS VALUE
     // INPUT LAYER BIASES: POINTERS(LAYER) -> DOUBLE(BIAS)
@@ -36,7 +36,6 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
     // CREATE THE POINTERS AND THE VALUES THEY ARE POINTING TO
 
     // CREATE THE INPUT LAYER
-    pNN->input_layer_size = input_layer_size;
 //    int next_layer_size = get_random_int(&min_weight_val, &max_weight_val);
     int next_layer_size = get_random_int(max_hlayer_size);
 
@@ -87,16 +86,23 @@ void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int i
     pNN->hidden_layers[hidden_layer_size - 1] = malloc(current_layer_size * sizeof(double**));
 
     // UPDATE CURRENT LAYER
-    int i = hidden_layer_size - 1;
-
     // CREATE NEURONS WITHIN EACH HIDDEN LAYER
     for(int j = 0; j < current_layer_size; ++j){
-        pNN->hidden_layers[i][j] = malloc(output_layer_size * sizeof(double));
+        pNN->hidden_layers[hidden_layer_size - 1][j] = malloc(output_layer_size * sizeof(double));
 
         // ASSIGN DOUBLE VALUES TO WEIGHT OF EACH NEURON
         for(int k = 0; k < output_layer_size; ++k){
-            pNN->hidden_layers[i][j][k] = get_random_double(max_weight_val);
+            pNN->hidden_layers[hidden_layer_size - 1][j][k] = get_random_double(max_weight_val);
         }
+    }
+
+    // CREATE THE OUTPUT LAYER
+    for(int i = 0; i < output_layer_size; ++i) {
+        // THE OUTPUT LAYER WILL NOT HOLD WEIGHTS BUT AN OUTPUT VALUE
+        // AS THERE IS NOT ANOTHER LAYER IT WILL BE PASSING TO
+        // THE VALUE WILL BE HELD IN PLACE OF THE NEURON, WHERE THE WEIGHT WOULD
+        // NORMALLY BE. THIS VALUE WILL BE ABLE TO BE ACCESSED AND MANIPULATED HOWEVER
+        pNN->output_layer[i] = get_random_double(max_weight_val);
     }
 }
 
@@ -122,11 +128,13 @@ double get_random_double(double max){
     return ((double) rand() / (double) RAND_MAX) * max;
 }
 
+// TO BE DEVELOPED
 int get_random_int(int max){
 //    return ((int) rand() / (int) RAND_MAX) * max;
     return max;
 }
 
+// CALL ONCE AT THE BEGINNING OF A SESSION THAT REQUIRES RANDOM NUMBERS
 int get_seed(void){
     return (int) rand() / (int) RAND_MAX;
 }

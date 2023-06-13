@@ -19,11 +19,11 @@
 struct NN {
     double **input_layer;               // INPUT LAYER
     double ***hidden_layers;            // HIDDEN LAYERS
-    double **output_layer;              // OUTPUT LAYER
+    double *output_layer;              // OUTPUT LAYER
 
     double **input_layer_biases;        // INPUT LAYER BIASES PER NEURON
     double ***hidden_layers_biases;     // HIDDEN LAYER BIASES PER NEURON
-    double **output_layer_biases;       // OUTPUT LAYER BIASES PER NEURON
+    double *output_layer_biases;       // OUTPUT LAYER BIASES PER NEURON
 
     int number_of_hidden_layers;        // NUMBER OF HIDDEN LAYERS
     int *hidden_layer_sizes;            // SIZE FOR EACH HIDDEN LAYER BASED ON INDEX
