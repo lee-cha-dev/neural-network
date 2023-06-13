@@ -41,7 +41,10 @@ void free_nn_pointers(struct NN *pNN, int input_layer_size);
 
 
 // RANDOM NUMBER GENERATION
-double get_random_double(const double *min, const double *max);
-double get_random_int(const int *min, const int *max);
+double get_random_double(double max);
+
+int get_random_int(int max);
+
+int get_seed(void);
 
 #endif //NEURAL_NETWORK_LIBRARY_H
