@@ -115,9 +115,21 @@ void free_nn_pointers(struct NN *pNN, int input_layer_size){
     free(pNN->input_layer);
     pNN->input_layer = NULL;
 
-    // FREE HIDDEN LAYER
+    // FREE HIDDEN LAYERS
+    for(int i = 0; i < pNN->number_of_hidden_layers; ++i){
+        for(int j = 0; j < pNN->hidden_layer_sizes[i]; ++j){
+            free(pNN->hidden_layers[i][j]);
+            pNN->hidden_layers[i][j] = NULL;
+        }
+        free(pNN->hidden_layers[i]);
+        pNN->hidden_layers[i] = NULL;
+    }
+    free(pNN->hidden_layers);
+    pNN->hidden_layers = NULL;
 
     // FREE OUTPUT LAYER
+    free(pNN->output_layer);
+    pNN->output_layer = NULL;
 }
 
 // THIS IS NOT A REAL RANDOM NUMBER GENERATOR. IT IS PREDICTABLE, BUT
