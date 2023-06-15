@@ -6,14 +6,7 @@
 #include <math.h>
 
 //******************************************************************//
-// MIGHT BE BETTER TO USE ONLY ONE STRUCT AND HAVE POINTERS TO
-// POINTERS FOR ARRAYS.
-// THIS WOULD ENSURE THAT POINTERS ARE NOT BEING
-// LOST IN OTHER STRUCTURES
-// THIS COULD REMOVE THE LEVELS OF CODE ABSTRACTION THAT WERE
-// OCCURRING WITH USING NEURON AND LAYER STRUCTS.
-// THE PREVIOUS APPROACH WAS CREATING MEMORY LEAKS,
-// AND A SINGULAR STRUCT IS LESS CONVOLUTED.
+// NEURAL NETWORK STRUCTURE
 //******************************************************************//
 
 struct NN {
@@ -32,6 +25,10 @@ struct NN {
     int output_layer_size;              // SIZE OF OUTPUT LAYER
 };
 
+//******************************************************************//
+// NEURAL NETWORK FUNCTIONS
+//******************************************************************//
+
 // THE MATRIX MULTIPLICATION WILL MOST DEFINITELY NEED TO ACCESS MEMORY IN BLOCKS. I WOULD LIKE TO
 // AVOID USING AN EXTERNAL LIBRARY DUE TO LIMITING LEARNING.
 
@@ -39,12 +36,15 @@ struct NN {
 void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int input_layer_size, int output_layer_size, int min_hlayer_size, int max_hlayer_size);
 void free_nn_pointers(struct NN *pNN, int input_layer_size);
 
+// DATA PASSING FUNCTIONS
+// NEED TO IMPLEMENT FORWARD PASSING AND BACKPROPAGATION
 
-// RANDOM NUMBER GENERATION
+// ACTIVATION FUNCTIONS
+// LEAKYRELU WILL BE THE FIRST ACTIVATION FUNCTION TO BE IMPLEMENTED
+
+// RANDOM NUMBER GENERATION -- NEED TO UPDATE RANDOM NUMS TO ACCEPT A RANGE
 double get_random_double(double max);
-
 int get_random_int(int max);
-
 int get_seed(void);
 
 #endif //NEURAL_NETWORK_LIBRARY_H
