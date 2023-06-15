@@ -33,7 +33,16 @@ struct NN {
 // AVOID USING AN EXTERNAL LIBRARY DUE TO LIMITING LEARNING.
 
 // SETTING && HANDLING THE NN'S VALUES
-void nn_init(struct NN *pNN, double min_weight_val, double max_weight_val, int input_layer_size, int output_layer_size, int min_hlayer_size, int max_hlayer_size);
+void nn_init(
+        struct NN *pNN,
+        double min_weight_val,
+        double max_weight_val,
+        int input_layer_size,
+        int output_layer_size,
+        int min_hlayer_size,
+        int max_hlayer_size
+);
+
 void free_nn_pointers(struct NN *pNN, int input_layer_size);
 
 // DATA PASSING FUNCTIONS
